@@ -21,6 +21,13 @@ router.ws('/paint', (ws, req) => {
     console.log('client connected');
     activeConnections[id] = ws;
 
+    ws.send(
+        JSON.stringify({
+            type: "INIT_PIXELS",
+            payload: pixels,
+        })
+    );
+
     ws.on("message", (message: string) => {
         try {
             const data = JSON.parse(message.toString()) as IncomingMessage;
@@ -49,9 +56,9 @@ router.ws('/paint', (ws, req) => {
     });
 
 
-
     ws.on('close', () => {
-        console.log('client disconnected');
+        console.log('client disconnected:', id);
+        delete activeConnections[id];
     });
 });
 
